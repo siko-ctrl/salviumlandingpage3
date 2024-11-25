@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salvium - Next Gen Blockchain</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --neon-green: #0AEB85;
+            --dark-bg: #0a0a0a;
+            --accent-blue: #00f7ff;
+            --accent-purple: #b400ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: #fff;
+            overflow-x: hidden;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        .glitch-container {
+            position: relative;
+        }
+
+        .glitch {
+            position: relative;
+            animation: glitch 1s infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+
+        .nav-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(10, 235, 133, 0.3);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--neon-green);
+            text-shadow: 0 0 10px rgba(10, 235, 133, 0.5);
+            position: relative;
+            padding: 0.5rem 1rem;
+        }
+
+        .logo::before, .logo::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 2px solid var(--neon-green);
+            animation: borderGlow 2s infinite alternate;
+        }
+
+        .logo::after {
+            animation-delay: -1s;
+        }
+
+        @keyframes borderGlow {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.1); opacity: 0; }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            position: relative;
+            padding: 0.5rem 1rem;
+            transition: color 0.3s;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--neon-green);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--neon-green);
+        }
+
+        .nav-links a:hover::before {
+            transform: scaleX(1);
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 2rem;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            position: relative;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        .hero h1 span {
+            display: block;
+            background: linear-gradient(45deg, var(--neon-green), var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientFlow 8s linear infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50% }
+            50% { background-position: 100% 50% }
+            100% { background-position: 0% 50% }
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #a0a0a0;
+            font-family: 'Rajdhani', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1.2rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark-bg);
+            background: var(--neon-green);
+            border: none;
+            border-radius: 0;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 
+                0 0 30px rgba(10, 235, 133, 0.5),
+                0 0 60px rgba(10, 235, 133, 0.3),
+                0 0 90px rgba(10, 235, 133, 0.1);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(10, 235, 133, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            clip-path: polygon(0 0, 100% 0, 95% 95%, 5% 100%);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(
+                circle at center,
+                rgba(10, 235, 133, 0.1) 0%,
+                transparent 70%
+            );
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 
+                0 0 30px rgba(10, 235, 133, 0.2),
+                0 0 60px rgba(10, 235, 133, 0.1);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card h3 {
+            font-size: 1.8rem;
+            color: var(--neon-green);
+            margin-bottom: 1rem;
+            position: relative;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .feature-card p {
+            color: #a0a0a0;
+            line-height: 1.6;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            padding: 4rem 2rem;
+            background: rgba(10, 235, 133, 0.05);
+            position: relative;
+            z-index: 2;
+            clip-path: polygon(0 15%, 100% 0, 100% 85%, 0 100%);
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .stat-value {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--neon-green);
+            margin-bottom: 0.5rem;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 20px rgba(10, 235, 133, 0.3);
+        }
+
+        .stat-label {
+            color: #a0a0a0;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .footer {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(10, 235, 133, 0.3);
+            padding: 4rem 2rem 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-section {
+            padding: 0 1rem;
+        }
+
+        .footer-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-green);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(10, 235, 133, 0.5);
+        }
+
+        .footer-description {
+            color: #a0a0a0;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            color: #fff;
+            font-size: 1.25rem;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .social-link:hover {
+            color: var(--neon-green);
+            transform: translateY(-2px);
+        }
+
+        .footer-section h4 {
+            font-family: 'Orbitron', sans-serif;
+            color: #fff;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #a0a0a0;
+            text-decoration: none;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .footer-links a:hover {
+            color: var(--neon-green);
+        }
+
+        .footer-links a::before {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--neon-green);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .footer-links a:hover::before {
+            transform: scaleX(1);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .social-links {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    
+    <div class="nav-container">
+        <nav>
+            <a href="#" class="logo glitch">SALVIUM</a>
+            <div class="nav-links">
+                <a href="#features" data-scroll>Features</a>
+                <a href="#about" data-scroll>About</a>
+                <a href="#contact" data-scroll>Contact</a>
+            </div>
+        </nav>
+    </div>
+
+    <section id="hero" class="hero">
+        <div class="hero-content">
+            <h1 class="glitch-container">
+                <span>NEXT GENERATION</span>
+                <span>BLOCKCHAIN</span>
+            </h1>
+            <p>Redefining privacy and security in the digital realm</p>
+            <button class="cta-button">Enter The Future</button>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="feature-card">
+            <h3>Quantum Shield</h3>
+            <p>Military-grade encryption protecting your assets from next-generation threats</p>
+        </div>
+        <div class="feature-card">
+            <h3>Ghost Protocol</h3>
+            <p>Advanced zero-knowledge proofs ensuring complete transaction anonymity</p>
+        </div>
+        <div class="feature-card">
+            <h3>Neural Contracts</h3>
+            <p>Self-evolving smart contracts with adaptive security measures</p>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="stat-item">
+            <div class="stat-value">$500M+</div>
+            <div class="stat-label">Total Value Secured</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">100K+</div>
+            <div class="stat-label">Active Nodes</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">1M+</div>
+            <div class="stat-label">Transactions</div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3 class="footer-title">Salvium</h3>
+                <p class="footer-description">Next Generation Blockchain Technology</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-telegram"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#roadmap">Roadmap</a></li>
+                    <li><a href="#whitepaper">Whitepaper</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <ul class="footer-links">
+                    <li><a href="#docs">Documentation</a></li>
+                    <li><a href="#api">API</a></li>
+                    <li><a href="#support">Support</a></li>
+                    <li><a href="#community">Community</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Salvium. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Three.js background animation
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        // Create particles
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 1000;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for(let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 5;
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.005,
+            color: '#0AEB85'
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        camera.position.z = 2;
+
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+            particlesMesh.rotation.y += 0.001;
+            particlesMesh.rotation.x += 0.001;
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Smooth scrolling
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all elements with data-scroll attribute
+            const scrollLinks = document.querySelectorAll('a[data-scroll]');
+            
+            scrollLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return; // Skip if it's just "#"
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (!targetElement) return; // Skip if target element doesn't exist
+                    
+                    const navHeight = document.querySelector('.nav-container').offsetHeight;
+                    const targetPosition = targetElement.offsetTop - navHeight;
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
